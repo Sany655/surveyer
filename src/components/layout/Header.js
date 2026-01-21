@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { BiLogOut, BiUser, BiHome } from 'react-icons/bi';
+import { BiLogOut, BiUser, BiHome, BiKey } from 'react-icons/bi';
 import toast from 'react-hot-toast';
 
 export default function Header() {
@@ -60,6 +60,12 @@ export default function Header() {
                         </div>
                         <span className="text-xs font-medium text-slate-600">Admin</span>
                     </div>
+                    <Link href="/change-password">
+                        <Button variant="ghost" size="sm" className="gap-2">
+                            <BiKey size={18} />
+                            <span className="hidden sm:inline">Change Password</span>
+                        </Button>
+                    </Link>
                     <Button variant="ghost" size="sm" onClick={handleLogout} className="text-red-500 hover:text-red-600 hover:bg-red-50 gap-2">
                         <BiLogOut size={18} />
                         <span className="hidden sm:inline">Logout</span>

@@ -35,6 +35,7 @@ export default function LoginPage() {
             if (!res.ok) {
                 // throw new Error(data.message || 'Login failed')
                 toast.error(data.message || 'Login failed')
+                return
             }
 
             toast.success("Login successful")

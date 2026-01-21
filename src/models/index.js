@@ -6,28 +6,22 @@ const Sequelize = require('sequelize');
 const process = require('process');
 const env = process.env.NODE_ENV || 'development';
 
-let sequelize;
-if (process.env.DATABASE_URL) {
-    sequelize = new Sequelize(process.env.DATABASE_URL, {
+const sequelize = new Sequelize(
+    process.env.DB_NAME || 'nirbachonhub_db',
+    process.env.DB_USER || 'root',
+    process.env.DB_PASSWORD || '',
+    {
+        host: process.env.DB_HOST || '127.0.0.1',
         dialect: 'mysql',
-        encoding: 'utf8',
+        logging: false,
         dialectOptions: {
-            // ssl: { require: true, rejectUnauthorized: false } // Uncomment for production
+            ssl: (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true') ? {
+                require: true,
+                rejectUnauthorized: false
+            } : undefined
         }
-    });
-} else {
-    // Fallback to individual env vars
-    sequelize = new Sequelize(
-        process.env.DB_NAME || 'nirbachonhub_db',
-        process.env.DB_USER || 'root',
-        process.env.DB_PASSWORD || '',
-        {
-            host: process.env.DB_HOST || '127.0.0.1',
-            dialect: 'mysql',
-            logging: false
-        }
-    );
-}
+    }
+);
 
 const db = {};
 
