@@ -12,7 +12,7 @@ import toast from 'react-hot-toast'
 import { useParams } from 'next/navigation'
 
 export default function PublicSurveyPage() {
-    const { uniqueId } = useParams()
+    const { uniqueId: paramsId } = useParams()
 
     // States
     const [survey, setSurvey] = useState(null)
@@ -72,7 +72,7 @@ export default function PublicSurveyPage() {
 
     const fetchSurvey = async () => {
         try {
-            const res = await fetch(`/api/surveys/${uniqueId}`)
+            const res = await fetch(`/api/surveys/${paramsId}`)
             const data = await res.json()
 
             if (!res.ok) {
@@ -251,7 +251,7 @@ export default function PublicSurveyPage() {
                 longitude: location.long
             }
 
-            const res = await fetch(`/api/surveys/${uniqueId}/submit`, {
+            const res = await fetch(`/api/surveys/${survey.unique_id}/submit`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

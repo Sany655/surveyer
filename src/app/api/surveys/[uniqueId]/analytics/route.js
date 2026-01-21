@@ -28,10 +28,10 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request, { params }) {
     try {
-        const { uniqueId } = await params;
+        const { uniqueId: paramId } = await params;
 
         const survey = await Survey.findOne({
-            where: { unique_id: uniqueId },
+            where: typeof paramId === 'string' && paramId.length > 5 ? { unique_id: paramId } : { id: paramId },
             include: [{ model: SurveyQuestion, as: 'questions' }]
         });
 

@@ -60,8 +60,9 @@ export async function POST(request, { params }) {
 
                 if (distance > 50) { // 50km radius threshold
                     await transaction.rollback();
+                    console.log(`Geo Check: Dist ${district.name} to User: ${distance.toFixed(2)}km`);
                     return NextResponse.json({
-                        message: `Location verification failed. You are ${distance.toFixed(1)}km away from the survey area (${district.name}).`
+                        message: `Location verification failed. You are away from the survey area.`
                     }, { status: 400 });
                 }
             }

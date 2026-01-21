@@ -98,34 +98,39 @@ function Surveys() {
             <Card key={survey.id} className="flex flex-col">
               <CardHeader>
                 <div className="flex justify-between items-start gap-2">
-                  <CardTitle className="line-clamp-1">{survey.title}</CardTitle>
+                  <CardTitle className="line-clamp-2" title={survey.title}>{survey.title}</CardTitle>
                   <Badge className={survey.status === 1 ? "bg-green-800" : "bg-gray-800"}>
                     {survey.status === 1 ? 'Published' : 'Draft'}
                   </Badge>
                 </div>
-                <CardDescription className="line-clamp-2 min-h-[40px]">
+                <CardDescription className="line-clamp-2 min-h-[40px]" title={survey.description}>
                   {survey.description || "No description provided."}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-1">
                 <div className="text-sm text-muted-foreground">
                   <p>Questions: {survey.questions ? survey.questions.length : 0}</p>
+                  <p>Responses: {survey.responses ? survey.responses.length : 0}</p>
+                  <p>Division: {survey.division ? survey.division.name : 'N/A'}</p>
+                  <p>District: {survey.district ? survey.district.name : 'N/A'}</p>
+                  <p>Upazilla: {survey.upazilla ? survey.upazilla.name : 'N/A'}</p>
+                  <p>Union: {survey.union ? survey.union.name : 'N/A'}</p>
                   <p>Created: {new Date(survey.createdAt).toLocaleDateString()}</p>
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col gap-2">
                 <div className="grid grid-cols-2 gap-2 w-full">
-                  <Button variant="outline" size="sm" onClick={() => copyLink(survey.unique_id)} className="w-full">
+                  <Button variant="outline" size="sm" onClick={() => copyLink(survey.id)} className="w-full">
                     <BiCopy className="mr-2" /> Link
                   </Button>
-                  <Link href={`/${survey.unique_id}/report`} className="w-full">
+                  <Link href={`/${survey.id}/report`} className="w-full">
                     <Button variant="outline" size="sm" className="w-full">
                       <BiBarChart className="mr-2" /> Report
                     </Button>
                   </Link>
                 </div>
                 <div className="grid grid-cols-2 gap-2 w-full">
-                  <Link href={`/${survey.unique_id}/edit`} className="w-full">
+                  <Link href={`/${survey.id}/edit`} className="w-full">
                     <Button variant="secondary" size="sm" className="w-full">
                       <BiEdit className="mr-2" /> Edit
                     </Button>

@@ -24,7 +24,7 @@ const QUESTION_TYPES = [
 
 export default function EditSurveyPage() {
     const router = useRouter()
-    const { uniqueId } = useParams()
+    const { uniqueId: paramId } = useParams()
 
     // Form States
     const [title, setTitle] = useState('')
@@ -33,6 +33,7 @@ export default function EditSurveyPage() {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [hasResponses, setHasResponses] = useState(false)
+    const [uniqueId, setUniqueId] = useState(paramId)
 
     // Location States
     const [divisions, setDivisions] = useState([])
@@ -55,13 +56,14 @@ export default function EditSurveyPage() {
 
     const fetchSurveyData = async () => {
         try {
-            const res = await fetch(`/api/surveys/${uniqueId}/manage`)
+            const res = await fetch(`/api/surveys/${paramId}/manage`)
             if (!res.ok) throw new Error('Failed to load survey')
             const data = await res.json()
 
             setTitle(data.title)
             setDescription(data.description)
             setHasResponses(data.responseCount > 0)
+            setUniqueId(data.unique_id)
 
             // Reconstruct questions
             const mappedQuestions = data.questions.map(q => {

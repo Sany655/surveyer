@@ -17,8 +17,18 @@ module.exports = (sequelize, DataTypes) => {
                 onDelete: 'CASCADE'
             });
 
+            // Responses Association
+            Survey.hasMany(models.SurveyResponse, {
+                foreignKey: 'survey_id',
+                as: 'responses',
+                onDelete: 'CASCADE'
+            });
+
             // Location Associations
+            Survey.belongsTo(models.Division, { foreignKey: 'division_id', as: 'division' });
             Survey.belongsTo(models.District, { foreignKey: 'district_id', as: 'district' });
+            Survey.belongsTo(models.Upazilla, { foreignKey: 'upazila_id', as: 'upazila' });
+            Survey.belongsTo(models.Union, { foreignKey: 'union_id', as: 'union' });
         }
     }
 

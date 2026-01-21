@@ -6,7 +6,7 @@ export async function GET(request, { params }) {
         const { uniqueId } = await params;
 
         const survey = await Survey.findOne({
-            where: { unique_id: uniqueId },
+            where: (typeof uniqueId === 'string' && uniqueId.length > 5) ? { unique_id: uniqueId } : { id: uniqueId },
             include: [{ model: SurveyQuestion, as: 'questions' }]
         });
 

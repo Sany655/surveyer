@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { Survey, SurveyQuestion } from '@/models';
+import { Survey, SurveyQuestion, SurveyResponse, Division, District, Upazilla, Union } from '@/models';
 import { v4 as uuidv4 } from 'uuid';
 import { jwtVerify } from 'jose';
 
@@ -13,7 +13,7 @@ export async function GET(request) {
     try {
         const surveys = await Survey.findAll({
             order: [['createdAt', 'DESC']],
-            include: [{ model: SurveyQuestion, as: 'questions' }]
+            include: [{ model: SurveyQuestion, as: 'questions' }, { model: SurveyResponse, as: 'responses' }, { model: Division, as: 'division' }, { model: District, as: 'district' }, { model: Upazilla, as: 'upazila' }, { model: Union, as: 'union' }]
         });
 
         return NextResponse.json(surveys);

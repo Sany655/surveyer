@@ -117,7 +117,7 @@ export async function PUT(request, { params }) {
 }
 
 export async function GET(request, { params }) {
-    const { uniqueId } = await params;
+    const { uniqueId: paramId } = await params;
     const cookieStore = await cookies();
     const token = cookieStore.get('auth_token')?.value;
     if (!token) {
@@ -125,7 +125,7 @@ export async function GET(request, { params }) {
     }
     try {
         const survey = await Survey.findOne({
-            where: { unique_id: uniqueId },
+            where: typeof paramId === 'string' && paramId.length > 5 ? { unique_id: paramId } : { id: paramId },
             include: [{ model: SurveyQuestion, as: 'questions' }]
         });
 
