@@ -14,12 +14,12 @@ const sequelize = new Sequelize(
         host: process.env.DB_HOST || '127.0.0.1',
         dialect: 'mysql',
         logging: false,
-        dialectOptions: {
-            ssl: (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true') ? {
-                require: true,
-                rejectUnauthorized: false
-            } : undefined
-        }
+        // dialectOptions: {
+        //     ssl: (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true') ? {
+        //         require: true,
+        //         rejectUnauthorized: false
+        //     } : undefined
+        // }
     }
 );
 
