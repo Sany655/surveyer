@@ -49,7 +49,7 @@ export default function PublicSurveyPage() {
                 setGeoError(null)
             },
             (error) => {
-                console.error("Geo Error Details:", { code: error.code, message: error.message });
+                console.log("Geo Error Details:", { code: error.code, message: error.message });
                 // Don't show technical error toast repeatedly, just set state or show friendly toast
                 // toast.error("Location access needed: " + error.message);
 
@@ -77,7 +77,6 @@ export default function PublicSurveyPage() {
 
             if (!res.ok) {
                 console.error("Fetch Survey Error Details:", data)
-                return N
                 throw new Error(data.message || 'Survey not found or unavailable')
             }
 

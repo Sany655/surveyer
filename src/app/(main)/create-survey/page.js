@@ -233,6 +233,26 @@ function QuestionaireContent() {
             if (!res.ok) {
                 let msg = data.message || 'Failed to generate survey';
 
+                // Try to parse if msg is a JSON string (often happens with some upstream API errors)
+                if (typeof msg === 'string' && (msg.startsWith('{') || msg.startsWith('['))) {
+                    try {
+                        const parsed = JSON.parse(msg);
+                        // Check for nested error objects common in AI providers
+                        if (parsed.error && parsed.error.message) {
+                            msg = parsed.error.message;
+                        } else if (parsed.message) {
+                            msg = parsed.message;
+                        }
+                    } catch (e) {
+                        // ignore parse error, use original string
+                    }
+                }
+
+                // Friendly override for known technical errors
+                if (msg.toLowerCase().includes('invalid api key') || msg.toLowerCase().includes('unauthorized')) {
+                    msg = "AI Service Unavailable: Please check API configuration.";
+                }
+
                 // If it's a quota error with a huge details dump, simplify it
                 if (data.details && (typeof data.details === 'string') && data.details.includes('Quota exceeded')) {
                     // Try to finding specific retry time if available in the text
@@ -243,7 +263,8 @@ function QuestionaireContent() {
                         msg = "AI Usage Limit Exceeded. Please try again in a minute.";
                     }
                 } else if (data.details) {
-                    msg += `\n${data.details}`; // Keep details for other errors if they aren't huge
+                    // Check if data.details is also a JSON object/string that needs parsing
+                    // validation errors often come here
                 }
 
                 throw new Error(msg);

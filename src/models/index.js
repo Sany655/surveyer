@@ -1,10 +1,7 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
 const Sequelize = require('sequelize');
 const process = require('process');
-const env = process.env.NODE_ENV || 'development';
 
 const sequelize = new Sequelize(
     process.env.DB_NAME || 'nirbachonhub_db',
@@ -14,12 +11,6 @@ const sequelize = new Sequelize(
         host: process.env.DB_HOST || '127.0.0.1',
         dialect: 'mysql',
         logging: false,
-        // dialectOptions: {
-        //     ssl: (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true') ? {
-        //         require: true,
-        //         rejectUnauthorized: false
-        //     } : undefined
-        // }
     }
 );
 
