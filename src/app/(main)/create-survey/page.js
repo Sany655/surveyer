@@ -428,6 +428,9 @@ function QuestionaireContent() {
                                                 <SelectValue placeholder="Select Division" />
                                             </SelectTrigger>
                                             <SelectContent>
+                                                <SelectItem>
+                                                    Select Division
+                                                </SelectItem>
                                                 {divisions.map(div => (
                                                     <SelectItem key={div.id} value={div.id.toString()}>
                                                         {div.name} ({div.bn_name})
@@ -444,6 +447,9 @@ function QuestionaireContent() {
                                                 <SelectValue placeholder="Select District" />
                                             </SelectTrigger>
                                             <SelectContent>
+                                                <SelectItem>
+                                                    Select District
+                                                </SelectItem>
                                                 {districts.map(dist => (
                                                     <SelectItem key={dist.id} value={dist.id.toString()}>
                                                         {dist.name} ({dist.bn_name})
@@ -460,6 +466,9 @@ function QuestionaireContent() {
                                                 <SelectValue placeholder="Select Upazila" />
                                             </SelectTrigger>
                                             <SelectContent>
+                                                <SelectItem>
+                                                    Select Upazila
+                                                </SelectItem>
                                                 {upazilas.map(upa => (
                                                     <SelectItem key={upa.id} value={upa.id.toString()}>
                                                         {upa.name} ({upa.bn_name})
@@ -476,6 +485,9 @@ function QuestionaireContent() {
                                                 <SelectValue placeholder="Select Union" />
                                             </SelectTrigger>
                                             <SelectContent>
+                                                <SelectItem>
+                                                    Select Union
+                                                </SelectItem>
                                                 {unions.map(uni => (
                                                     <SelectItem key={uni.id} value={uni.id.toString()}>
                                                         {uni.name} ({uni.bn_name})

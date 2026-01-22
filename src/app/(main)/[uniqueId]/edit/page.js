@@ -390,6 +390,7 @@ export default function EditSurveyPage() {
                                 <Select value={selectedDivision} onValueChange={handleDivisionChange}>
                                     <SelectTrigger><SelectValue placeholder="Select Division" /></SelectTrigger>
                                     <SelectContent>
+                                        <SelectItem>Select Division</SelectItem>
                                         {divisions.map(d => <SelectItem key={d.id} value={String(d.id)}>{d.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
@@ -399,6 +400,7 @@ export default function EditSurveyPage() {
                                 <Select value={selectedDistrict} onValueChange={handleDistrictChange} disabled={!selectedDivision}>
                                     <SelectTrigger><SelectValue placeholder="Select District" /></SelectTrigger>
                                     <SelectContent>
+                                        <SelectItem>Select District</SelectItem>
                                         {districts.map(d => <SelectItem key={d.id} value={String(d.id)}>{d.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
@@ -408,6 +410,7 @@ export default function EditSurveyPage() {
                                 <Select value={selectedUpazila} onValueChange={handleUpazilaChange} disabled={!selectedDistrict}>
                                     <SelectTrigger><SelectValue placeholder="Select Upazila" /></SelectTrigger>
                                     <SelectContent>
+                                        <SelectItem>Select Upazila</SelectItem>
                                         {upazilas.map(u => <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
@@ -417,6 +420,7 @@ export default function EditSurveyPage() {
                                 <Select value={selectedUnion} onValueChange={(v) => setSelectedUnion(v)} disabled={!selectedUpazila}>
                                     <SelectTrigger><SelectValue placeholder="Select Union" /></SelectTrigger>
                                     <SelectContent>
+                                        <SelectItem>Select Union</SelectItem>
                                         {unions.map(u => <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
