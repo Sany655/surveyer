@@ -113,7 +113,7 @@ function Surveys() {
                   <p>Responses: {survey.responses ? survey.responses.length : 0}</p>
                   <p>Division: {survey.division ? survey.division.name : 'N/A'}</p>
                   <p>District: {survey.district ? survey.district.name : 'N/A'}</p>
-                  <p>Upazilla: {survey.upazilla ? survey.upazilla.name : 'N/A'}</p>
+                  <p>Upazila: {survey.upazila ? survey.upazila.name : 'N/A'}</p>
                   <p>Union: {survey.union ? survey.union.name : 'N/A'}</p>
                   <p>Created: {new Date(survey.createdAt).toLocaleDateString()}</p>
                 </div>

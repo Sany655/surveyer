@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { Survey, District, SurveyResponse, SurveyAnswer, sequelize } from '@/models';
+import { Survey, District, Division, Upazilla, Union, SurveyResponse, SurveyAnswer, sequelize } from '@/models';
+import { verifyGeoLocation } from '@/lib/geoUtils';
 
 export async function POST(request, { params }) {
     const { uniqueId } = await params;
@@ -18,7 +19,7 @@ export async function POST(request, { params }) {
         const survey = await Survey.findOne({
             where: { unique_id: uniqueId },
             include: [
-                { model: District, as: 'district' } // Ensure association exists or fetch separately if needed
+                // { model: District, as: 'district' }, // Ensure association exists or fetch separately if needed
                 // Note: Standard Survey model might not include District directly if alias is not default.
                 // Checking Model: Survey.belongsTo(District) isn't explicit in snippet, but field district_id exists.
                 // Let's fetch District separately to be safe and avoid include errors if association alias mismatch.
@@ -35,39 +36,17 @@ export async function POST(request, { params }) {
             return NextResponse.json({ message: "This survey is currently not available." }, { status: 403 });
         }
 
-        // --- GEO VALIDATION (District Level) ---
-        // Fetch District if survey has one
-        if (survey.district_id) {
-            const district = await District.findByPk(survey.district_id);
-            if (district && district.lat && district.lon && latitude && longitude) {
-                const distLat = parseFloat(district.lat);
-                const distLon = parseFloat(district.lon);
-                const userLat = parseFloat(latitude);
-                const userLon = parseFloat(longitude);
+        // --- GEO VALIDATION ---
+        if (latitude && longitude) {
+            const { isValid, message } = await verifyGeoLocation(survey, parseFloat(latitude), parseFloat(longitude), { Division, District, Upazilla, Union });
 
-                // Haversine Formula
-                const R = 6371; // Earth radius in km
-                const dLat = (userLat - distLat) * Math.PI / 180;
-                const dLon = (userLon - distLon) * Math.PI / 180;
-                const a =
-                    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(distLat * Math.PI / 180) * Math.cos(userLat * Math.PI / 180) *
-                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                const distance = R * c;
-
-                console.log(`Geo Check: Dist ${district.name} to User: ${distance.toFixed(2)}km`);
-
-                if (distance > 50) { // 50km radius threshold
-                    await transaction.rollback();
-                    console.log(`Geo Check: Dist ${district.name} to User: ${distance.toFixed(2)}km`);
-                    return NextResponse.json({
-                        message: `Location verification failed. You are away from the survey area.`
-                    }, { status: 400 });
-                }
+            if (!isValid) {
+                await transaction.rollback();
+                console.log(`Geo Verification Failed: ${message}`);
+                return NextResponse.json({ message: message || "Location verification failed." }, { status: 400 });
             }
         }
-        // ---------------------------------------
+        // ----------------------
 
         // Create Response Entry
         const response = await SurveyResponse.create({

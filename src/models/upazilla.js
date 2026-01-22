@@ -25,6 +25,14 @@ module.exports = (sequelize, DataTypes) => {
     pcode: {
       type: DataTypes.STRING(12),
       allowNull: false
+    },
+    lat: {
+      type: DataTypes.DOUBLE,
+      allowNull: true
+    },
+    lon: {
+      type: DataTypes.DOUBLE,
+      allowNull: true
     }
   }, {
     sequelize,
