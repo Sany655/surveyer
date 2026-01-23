@@ -39,6 +39,26 @@ function Surveys() {
     toast.success("Link copied to clipboard!")
   }
 
+  const toggleGeoRequired = async (uniqueId, required) => {
+    // Optimistic update
+    setSurveys(surveys.map(s => s.unique_id === uniqueId ? { ...s, is_geo_location_required: required ? 1 : 0 } : s))
+
+    try {
+      const res = await fetch(`/api/surveys/${uniqueId}/manage`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_geo_location_required: required ? 1 : 0 })
+      })
+      if (!res.ok) throw new Error('Failed to update')
+      toast.success(`Location requirement ${required ? 'enabled' : 'disabled'}`)
+    } catch (error) {
+      console.error(error)
+      toast.error("Failed to update settings")
+      // Revert on error
+      fetchSurveys()
+    }
+  }
+
   const deleteSurvey = async (uniqueId) => {
     // Initial confirmation
     if (!confirm("Are you sure you want to delete this survey?")) return
@@ -116,6 +136,21 @@ function Surveys() {
                   <p>Upazila: {survey.upazila ? survey.upazila.name : 'N/A'}</p>
                   <p>Union: {survey.union ? survey.union.name : 'N/A'}</p>
                   <p>Created: {new Date(survey.createdAt).toLocaleDateString()}</p>
+                  <p>Union: {survey.union ? survey.union.name : 'N/A'}</p>
+                  <p>Created: {new Date(survey.createdAt).toLocaleDateString()}</p>
+
+                  <div className="flex items-center space-x-2 mt-2">
+                    <input
+                      type="checkbox"
+                      id={`geo-${survey.unique_id}`}
+                      checked={survey.is_geo_location_required === 1 || survey.is_geo_location_required === true}
+                      onChange={(e) => toggleGeoRequired(survey.unique_id, e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <label htmlFor={`geo-${survey.unique_id}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Geo Location Required
+                    </label>
+                  </div>
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col gap-2">

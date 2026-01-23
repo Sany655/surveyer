@@ -29,8 +29,39 @@ export default function PublicSurveyPage() {
 
     useEffect(() => {
         fetchSurvey()
-        requestLocation()
     }, [])
+
+    useEffect(() => {
+        if (survey && survey.is_geo_location_required) {
+            checkPermissionAndRequest()
+        }
+    }, [survey])
+
+    const checkPermissionAndRequest = async () => {
+        if (!navigator.geolocation) {
+            setGeoPermission('denied')
+            setGeoError("Geolocation is not supported")
+            return
+        }
+
+        try {
+            const result = await navigator.permissions.query({ name: 'geolocation' })
+            if (result.state === 'granted') {
+                requestLocation()
+            } else if (result.state === 'prompt') {
+                requestLocation() // Will show browser prompt
+            } else {
+                setGeoPermission('denied')
+            }
+
+            result.onchange = () => {
+                if (result.state === 'granted') requestLocation()
+                else setGeoPermission(result.state)
+            }
+        } catch (e) {
+            requestLocation() // Fallback
+        }
+    }
 
     const requestLocation = () => {
         if (!navigator.geolocation) {
@@ -50,8 +81,6 @@ export default function PublicSurveyPage() {
             },
             (error) => {
                 console.log("Geo Error Details:", { code: error.code, message: error.message });
-                // Don't show technical error toast repeatedly, just set state or show friendly toast
-                // toast.error("Location access needed: " + error.message);
 
                 if (error.code === error.PERMISSION_DENIED) {
                     setGeoPermission('denied')
@@ -230,9 +259,9 @@ export default function PublicSurveyPage() {
 
     const handleSubmit = async () => {
         if (!validateForm()) return
-        if (geoPermission !== 'granted') {
+        if (survey.is_geo_location_required && geoPermission !== 'granted') {
             toast.error("Location access is required")
-            requestLocation() // Try again
+            requestLocation()
             return
         }
 
@@ -283,8 +312,8 @@ export default function PublicSurveyPage() {
         return <div className="min-h-screen flex items-center justify-center bg-gray-50">{errorMsg || "Survey not found"}</div>
     }
 
-    // Strict Geo Blocking Screen
-    if (geoPermission === 'denied') {
+    // Strict Geo Blocking Screen (Required AND Not Granted)
+    if (survey.is_geo_location_required && geoPermission !== 'granted') {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
                 <Card className="w-full max-w-md text-center">
@@ -302,6 +331,7 @@ export default function PublicSurveyPage() {
                             We verify that responses are submitted from valid locations to ensure data integrity.
                             Please enable location permissions in your browser settings and try again.
                         </p>
+                        {geoError && <p className="text-red-500 text-sm mt-2">{geoError}</p>}
                     </CardContent>
                     <CardFooter>
                         <Button className="w-full" onClick={requestLocation}>Retry Location Access</Button>
@@ -310,6 +340,17 @@ export default function PublicSurveyPage() {
             </div>
         )
     }
+
+    // Existing Denied Logic for consistent UX if it was optional but user manually denied? 
+    // Actually if optional, we probably don't block. But original code blocked whenever denied.
+    // Let's stick to the new requirement: Only block if required. 
+    // If NOT required, we proceed even if denied (unless original logic intended to ALWAYS block if denied? Original logic blocked if geoPermission == 'denied').
+    // User said "if location /gps permission has given... it should ask only when its not given".
+    // User also said "if location not granted then form must not be displayed! (if location required)".
+
+    // I will keep the strict block above for is_geo_location_required.
+    // For optional, I will allow render.
+
 
     // Success Screen
     if (submitted) {
@@ -391,7 +432,7 @@ export default function PublicSurveyPage() {
                                     className={errors[q.id] ? "border-red-500" : ""}
                                 />
                             )}
-                            {q.type === 'multiple_choice' && (
+                            {q.type === 'checkbox' && (
                                 <div>
                                     {/* Handle older seeded JSON strings or objects */}
                                     {(() => {
@@ -424,7 +465,7 @@ export default function PublicSurveyPage() {
                                     })()}
                                 </div>
                             )}
-                            {q.type === 'checkbox' && (
+                            {q.type === 'multiple_choice' && (
                                 <div className="space-y-2">
                                     {(() => {
                                         let opts = q.options || [];

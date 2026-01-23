@@ -64,6 +64,10 @@ module.exports = (sequelize, DataTypes) => {
         status: {
             type: DataTypes.TINYINT,
             defaultValue: 0 // 0: Draft, 1: Published
+        },
+        is_geo_location_required: {
+            type: DataTypes.TINYINT,
+            defaultValue: 0
         }
     }, {
         sequelize,

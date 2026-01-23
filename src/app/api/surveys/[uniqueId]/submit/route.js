@@ -37,6 +37,11 @@ export async function POST(request, { params }) {
         }
 
         // --- GEO VALIDATION ---
+        if (survey.is_geo_location_required && (!latitude || !longitude)) {
+            await transaction.rollback();
+            return NextResponse.json({ message: "Location access is required to submit this survey." }, { status: 400 });
+        }
+
         if (latitude && longitude) {
             const { isValid, message } = await verifyGeoLocation(survey, parseFloat(latitude), parseFloat(longitude), { Division, District, Upazilla, Union });
 

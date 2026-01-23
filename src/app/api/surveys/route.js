@@ -58,7 +58,8 @@ export async function POST(request) {
             district_id: location?.district,
             upazila_id: location?.upazila,
             union_id: location?.union,
-            status: status !== undefined ? status : 1 // Default to 1 (Published) if not specified, or allow 0
+            status: status !== undefined ? status : 1, // Default to 1 (Published) if not specified, or allow 0
+            is_geo_location_required: request.is_geo_location_required ? 1 : 0
         });
 
         if (questions && questions.length > 0) {

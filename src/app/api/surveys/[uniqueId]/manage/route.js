@@ -76,7 +76,8 @@ export async function PUT(request, { params }) {
             district_id: location?.district,
             upazila_id: location?.upazila,
             union_id: location?.union,
-            status: body.status !== undefined ? body.status : survey.status
+            status: body.status !== undefined ? body.status : survey.status,
+            is_geo_location_required: body.is_geo_location_required !== undefined ? body.is_geo_location_required : survey.is_geo_location_required
         }, { transaction });
 
         if (questions && questions.length > 0) {
