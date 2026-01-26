@@ -554,8 +554,8 @@ function QuestionaireContent() {
                                                                     <SelectItem value="text">Short Text</SelectItem>
                                                                     <SelectItem value="long_text">Long Text</SelectItem>
                                                                     <SelectItem value="number">Number</SelectItem>
-                                                                    <SelectItem value="multiple_choice">Multiple Choice</SelectItem>
-                                                                    <SelectItem value="checkbox">Checkbox</SelectItem>
+                                                                    <SelectItem value="multiple_choice">Single Choice</SelectItem>
+                                                                    <SelectItem value="checkbox">Multiple Choice</SelectItem>
                                                                     <SelectItem value="date">Date</SelectItem>
                                                                 </SelectContent>
                                                             </Select>

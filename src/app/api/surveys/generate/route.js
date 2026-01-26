@@ -29,7 +29,7 @@ export async function POST(request) {
                     "text": "String",
                     "type": "text | long_text | number | multiple_choice | checkbox | date",
                     "required": boolean,
-                    "options": ["Option 1", "Option 2"] (Only for multiple_choice/checkbox, otherwise empty array)
+                    "options": ["Option 1", "Option 2"] (Only for multiple_choice [single select] or checkbox [multiple select], otherwise empty array)
                 }
             ]
         }

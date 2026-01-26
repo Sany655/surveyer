@@ -432,9 +432,8 @@ export default function PublicSurveyPage() {
                                     className={errors[q.id] ? "border-red-500" : ""}
                                 />
                             )}
-                            {q.type === 'checkbox' && (
-                                <div>
-                                    {/* Handle older seeded JSON strings or objects */}
+                            {q.type === 'multiple_choice' && (
+                                <div className="space-y-2">
                                     {(() => {
                                         let opts = q.options || [];
                                         if (typeof opts === 'string') {
@@ -457,6 +456,7 @@ export default function PublicSurveyPage() {
                                                     value={opt}
                                                     id={`q${q.id}-opt${i}`}
                                                     name={`q${q.id}`}
+                                                    checked={answers[q.id] === opt}
                                                     onChange={() => handleInputChange(q.id, opt)}
                                                 />
                                                 <Label htmlFor={`q${q.id}-opt${i}`}>{opt}</Label>
@@ -465,7 +465,7 @@ export default function PublicSurveyPage() {
                                     })()}
                                 </div>
                             )}
-                            {q.type === 'multiple_choice' && (
+                            {q.type === 'checkbox' && (
                                 <div className="space-y-2">
                                     {(() => {
                                         let opts = q.options || [];

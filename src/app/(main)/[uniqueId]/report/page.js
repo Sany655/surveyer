@@ -279,7 +279,7 @@ export default function SurveyReport() {
                                         <div className="flex justify-between items-start gap-4">
                                             <div className="space-y-1">
                                                 <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 capitalize">
-                                                    {q.type.replace(/_/g, ' ')}
+                                                    {q.type === 'multiple_choice' ? 'Single Choice' : q.type === 'checkbox' ? 'Multiple Choice' : q.type.replace(/_/g, ' ')}
                                                 </span>
                                                 <CardTitle className="text-lg font-semibold leading-tight text-gray-800">
                                                     {index + 1}. {q.question}

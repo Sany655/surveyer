@@ -16,8 +16,8 @@ import { LoadingState } from "@/components/ui/spinner"
 const QUESTION_TYPES = [
     { value: 'text', label: 'Short Text' },
     { value: 'number', label: 'Number' },
-    { value: 'multiple_choice', label: 'Multiple Choice' },
-    { value: 'checkbox', label: 'Checkbox' },
+    { value: 'multiple_choice', label: 'Single Choice' },
+    { value: 'checkbox', label: 'Multiple Choice' },
     { value: 'long_text', label: 'Long Text' },
     { value: 'date', label: 'Date' }
 ]
