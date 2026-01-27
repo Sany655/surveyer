@@ -14,7 +14,7 @@ import toast from "react-hot-toast"
 import { LoadingState } from "@/components/ui/spinner"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BiPlus, BiTrash, BiSave, BiSend, BiDotsVerticalRounded, BiCheckCircle, BiXCircle } from "react-icons/bi"
+import { BiPlus, BiTrash, BiSave, BiSend, BiDotsVerticalRounded, BiCheckCircle, BiXCircle, BiUpArrowAlt, BiDownArrowAlt } from "react-icons/bi"
 import { Spinner } from "@/components/ui/spinner"
 
 // ... (other imports remain, but I will overwrite the whole file content structure to be safe with indentation/imports)
@@ -210,6 +210,24 @@ function QuestionaireContent() {
             }
             return q
         }))
+    }
+
+    const moveQuestionUp = (index) => {
+        if (index === 0) return
+        const newQuestions = [...questions]
+        const temp = newQuestions[index]
+        newQuestions[index] = newQuestions[index - 1]
+        newQuestions[index - 1] = temp
+        setQuestions(newQuestions)
+    }
+
+    const moveQuestionDown = (index) => {
+        if (index === questions.length - 1) return
+        const newQuestions = [...questions]
+        const temp = newQuestions[index]
+        newQuestions[index] = newQuestions[index + 1]
+        newQuestions[index + 1] = temp
+        setQuestions(newQuestions)
     }
 
     const handleAiGenerate = async () => {
@@ -521,12 +539,34 @@ function QuestionaireContent() {
                                     ) : (
                                         questions.map((q, qIndex) => (
                                             <Card key={qIndex} className="relative group border-muted">
-                                                <div className="absolute right-2 top-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                            <div className="absolute right-2 top-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center bg-white/80 rounded-md shadow-sm">
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                                        className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                                        disabled={qIndex === 0}
+                                                        onClick={() => moveQuestionUp(qIndex)}
+                                                        title="Move Up"
+                                                    >
+                                                        <BiUpArrowAlt size={20} />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                                        disabled={qIndex === questions.length - 1}
+                                                        onClick={() => moveQuestionDown(qIndex)}
+                                                        title="Move Down"
+                                                    >
+                                                        <BiDownArrowAlt size={20} />
+                                                    </Button>
+                                                    <div className="w-px h-4 bg-gray-300 mx-1"></div>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                                                         onClick={() => handleRemoveQuestion(qIndex)}
+                                                        title="Remove Question"
                                                     >
                                                         <BiTrash size={18} />
                                                     </Button>

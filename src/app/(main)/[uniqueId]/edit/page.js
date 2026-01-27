@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { BiPlus, BiTrash, BiSave, BiArrowBack, BiCheckCircle, BiXCircle } from "react-icons/bi"
+import { BiPlus, BiTrash, BiSave, BiArrowBack, BiCheckCircle, BiXCircle, BiUpArrowAlt, BiDownArrowAlt } from "react-icons/bi"
 import toast from 'react-hot-toast'
 import React, { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
@@ -237,6 +237,24 @@ export default function EditSurveyPage() {
         setQuestions(newQ)
     }
 
+    const moveQuestionUp = (index) => {
+        if (index === 0) return
+        const newQuestions = [...questions]
+        const temp = newQuestions[index]
+        newQuestions[index] = newQuestions[index - 1]
+        newQuestions[index - 1] = temp
+        setQuestions(newQuestions)
+    }
+
+    const moveQuestionDown = (index) => {
+        if (index === questions.length - 1) return
+        const newQuestions = [...questions]
+        const temp = newQuestions[index]
+        newQuestions[index] = newQuestions[index + 1]
+        newQuestions[index + 1] = temp
+        setQuestions(newQuestions)
+    }
+
     const updateValidation = (index, field, value) => {
         const newQ = [...questions]
         newQ[index] = {
@@ -457,14 +475,37 @@ export default function EditSurveyPage() {
                     {(questions || []).map((q, qIdx) => (
                         <Card key={qIdx} className="relative">
                             {!hasResponses && (
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="absolute top-2 right-2 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                    onClick={() => removeQuestion(qIdx)}
-                                >
-                                    <BiTrash />
-                                </Button>
+                                <div className="absolute top-2 right-2 flex items-center bg-white/80 rounded-md shadow-sm">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                        disabled={qIdx === 0}
+                                        onClick={() => moveQuestionUp(qIdx)}
+                                        title="Move Up"
+                                    >
+                                        <BiUpArrowAlt size={20} />
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                        disabled={qIdx === questions.length - 1}
+                                        onClick={() => moveQuestionDown(qIdx)}
+                                        title="Move Down"
+                                    >
+                                        <BiDownArrowAlt size={20} />
+                                    </Button>
+                                    <div className="w-px h-4 bg-gray-300 mx-1"></div>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                        onClick={() => removeQuestion(qIdx)}
+                                    >
+                                        <BiTrash />
+                                    </Button>
+                                </div>
                             )}
                             <CardContent className="pt-6 space-y-4">
                                 <div className="flex gap-4">
