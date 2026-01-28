@@ -17,14 +17,9 @@ import 'leaflet/dist/leaflet.css'
 import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
 import { LoadingState } from "@/components/ui/spinner"
-import { useMap } from 'react-leaflet'
-import L from 'leaflet'
 
-// Dynamically import Leaflet components
-const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false })
-const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false })
-const CircleMarker = dynamic(() => import('react-leaflet').then(mod => mod.CircleMarker), { ssr: false })
-const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false })
+// Dynamically import the Map component with SSR disabled
+const SurveyMap = dynamic(() => import('./SurveyMap'), { ssr: false })
 
 // Heatmap Color Scale
 const HEATMAP_COLORS = {
@@ -53,17 +48,6 @@ const getColorIntensity = (value, max) => {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658', '#8dd1e1'];
 
-// Helper to update map bounds
-function MapUpdater({ locations }) {
-    const map = useMap();
-    useEffect(() => {
-        if (locations && locations.length > 0) {
-            const bounds = L.latLngBounds(locations.map(loc => [loc.latitude, loc.longitude]));
-            map.fitBounds(bounds, { padding: [50, 50] });
-        }
-    }, [locations, map]);
-    return null;
-}
 
 // Helper to count word frequency (simple implementation)
 const getWordFrequency = (texts) => {
@@ -240,30 +224,7 @@ export default function SurveyReport() {
                             </div>
                         </CardHeader>
                         <CardContent className="p-0 h-[400px] relative">
-                            <MapContainer center={center} zoom={7} style={{ height: '100%', width: '100%' }}>
-                                <TileLayer
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                />
-                                {data.locations.map((loc, idx) => (
-                                    <CircleMarker
-                                        key={idx}
-                                        center={[loc.latitude, loc.longitude]}
-                                        // Heatmap Logic: larger radius, lower opacity, overlapping creates intensity
-                                        radius={mapMode === 'heatmap' ? 20 : 8}
-                                        fillOpacity={mapMode === 'heatmap' ? 0.2 : 0.6}
-                                        stroke={mapMode === 'markers'} // No stroke for heatmap mode
-                                        weight={2}
-                                        color="#ffffff"
-                                        fillColor={mapMode === 'heatmap' ? '#ef4444' : '#ef4444'}
-                                    >
-                                        <Popup className="text-center">
-                                            <span className="font-semibold text-sm">Response #{idx + 1}</span>
-                                        </Popup>
-                                    </CircleMarker>
-                                ))}
-                                <MapUpdater locations={data.locations} />
-                            </MapContainer>
+                            <SurveyMap center={center} mapMode={mapMode} locations={data.locations} />
                         </CardContent>
                     </Card>
 

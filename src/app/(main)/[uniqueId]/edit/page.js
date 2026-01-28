@@ -104,6 +104,7 @@ export default function EditSurveyPage() {
                 }
 
                 return {
+                    id: q.id,
                     text: q.question,
                     type: q.type,
                     options: options,
@@ -172,6 +173,7 @@ export default function EditSurveyPage() {
 
     const addQuestion = () => {
         setQuestions([{
+            id: null,
             text: '',
             type: 'text',
             options: [],
@@ -330,6 +332,7 @@ export default function EditSurveyPage() {
                     union: selectedUnion || null
                 },
                 questions: questions.map(q => ({
+                    id: q.id,
                     question: q.text,
                     type: q.type,
                     // Filter empty options
@@ -450,9 +453,7 @@ export default function EditSurveyPage() {
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
                         <h2 className="text-xl font-semibold">Questions</h2>
-                        {!hasResponses && (
-                            <Button onClick={addQuestion} variant="outline"><BiPlus className="mr-2" /> Add Question</Button>
-                        )}
+                        <Button onClick={addQuestion} variant="outline"><BiPlus className="mr-2" /> Add Question</Button>
                     </div>
 
                     {hasResponses && (
@@ -474,39 +475,38 @@ export default function EditSurveyPage() {
 
                     {(questions || []).map((q, qIdx) => (
                         <Card key={qIdx} className="relative">
-                            {!hasResponses && (
-                                <div className="absolute top-2 right-2 flex items-center bg-white/80 rounded-md shadow-sm">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-muted-foreground hover:text-primary"
-                                        disabled={qIdx === 0}
-                                        onClick={() => moveQuestionUp(qIdx)}
-                                        title="Move Up"
-                                    >
-                                        <BiUpArrowAlt size={20} />
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-muted-foreground hover:text-primary"
-                                        disabled={qIdx === questions.length - 1}
-                                        onClick={() => moveQuestionDown(qIdx)}
-                                        title="Move Down"
-                                    >
-                                        <BiDownArrowAlt size={20} />
-                                    </Button>
-                                    <div className="w-px h-4 bg-gray-300 mx-1"></div>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                        onClick={() => removeQuestion(qIdx)}
-                                    >
-                                        <BiTrash />
-                                    </Button>
-                                </div>
-                            )}
+                            <div className="absolute top-2 right-2 flex items-center bg-white/80 rounded-md shadow-sm">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                    disabled={qIdx === 0 || hasResponses}
+                                    onClick={() => moveQuestionUp(qIdx)}
+                                    title="Move Up"
+                                >
+                                    <BiUpArrowAlt size={20} />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                    disabled={qIdx === questions.length - 1 || hasResponses}
+                                    onClick={() => moveQuestionDown(qIdx)}
+                                    title="Move Down"
+                                >
+                                    <BiDownArrowAlt size={20} />
+                                </Button>
+                                <div className="w-px h-4 bg-gray-300 mx-1"></div>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                    disabled={hasResponses && q.id}
+                                    onClick={() => removeQuestion(qIdx)}
+                                >
+                                    <BiTrash />
+                                </Button>
+                            </div>
                             <CardContent className="pt-6 space-y-4">
                                 <div className="flex gap-4">
                                     <div className="flex-1 space-y-2">
@@ -515,12 +515,12 @@ export default function EditSurveyPage() {
                                             value={q.text}
                                             onChange={(e) => updateQuestion(qIdx, 'text', e.target.value)}
                                             placeholder="Enter question..."
-                                            disabled={hasResponses}
+                                            disabled={hasResponses && q.id}
                                         />
                                     </div>
                                     <div className="w-[200px] space-y-2">
                                         <Label>Type</Label>
-                                        <Select value={q.type} onValueChange={(v) => updateQuestion(qIdx, 'type', v)} disabled={hasResponses}>
+                                        <Select value={q.type} onValueChange={(v) => updateQuestion(qIdx, 'type', v)} disabled={hasResponses && q.id}>
                                             <SelectTrigger><SelectValue /></SelectTrigger>
                                             <SelectContent>
                                                 {QUESTION_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
@@ -538,16 +538,24 @@ export default function EditSurveyPage() {
                                                     value={opt}
                                                     onChange={(e) => updateOption(qIdx, oIdx, e.target.value)}
                                                     className="h-8 text-sm"
-                                                    disabled={hasResponses}
+                                                    disabled={hasResponses && q.id}
                                                 />
-                                                <Button size="icon" variant="ghost" className="h-8 w-8 text-red-400" onClick={() => removeOption(qIdx, oIdx)}>
-                                                    <BiTrash size={14} />
-                                                </Button>
+                                                {(!hasResponses || !q.id) && (
+                                                    <Button
+                                                        size="icon"
+                                                        variant="ghost"
+                                                        className="h-8 w-8 text-red-400"
+                                                        onClick={() => removeOption(qIdx, oIdx)}
+                                                        disabled={hasResponses && q.id}
+                                                    >
+                                                        <BiTrash size={14} />
+                                                    </Button>
+                                                )}
                                             </div>
                                         ))}
                                     </div>
                                 )}
-                                {!hasResponses && (
+                                {(q.type === 'multiple_choice' || q.type === 'checkbox') && (!hasResponses || !q.id) && (
                                     <Button size="sm" variant="ghost" onClick={() => addOption(qIdx)} className="text-xs">
                                         + Add Option
                                     </Button>
@@ -558,7 +566,7 @@ export default function EditSurveyPage() {
                                     <div className="p-4 bg-muted/30 rounded-md space-y-3 border border-dashed border-muted-foreground/30">
                                         <div className="flex items-center justify-between">
                                             <Label className="text-xs font-semibold uppercase text-primary">Response Validation</Label>
-                                            {!hasResponses && <Button variant="ghost" size="sm" className="h-6 text-xs text-muted-foreground" onClick={() => toggleValidation(qIdx)}>Remove</Button>}
+                                            {(!hasResponses || !q.id) && <Button variant="ghost" size="sm" className="h-6 text-xs text-muted-foreground" onClick={() => toggleValidation(qIdx)}>Remove</Button>}
                                         </div>
 
                                         <div className="flex flex-col sm:flex-row gap-3">
@@ -570,7 +578,7 @@ export default function EditSurveyPage() {
                                                         updateValidation(qIdx, 'type', val);
                                                         updateValidation(qIdx, 'operator', '');
                                                     }}
-                                                    disabled={hasResponses}
+                                                    disabled={hasResponses && q.id}
                                                 >
                                                     <SelectTrigger className="h-8 text-xs">
                                                         <SelectValue placeholder="Select type" />
@@ -599,7 +607,7 @@ export default function EditSurveyPage() {
                                                 <Select
                                                     value={q.validation?.operator}
                                                     onValueChange={(val) => updateValidation(qIdx, 'operator', val)}
-                                                    disabled={hasResponses}
+                                                    disabled={hasResponses && q.id}
                                                 >
                                                     <SelectTrigger className="h-8 text-xs">
                                                         <SelectValue placeholder="Operator" />
@@ -661,7 +669,7 @@ export default function EditSurveyPage() {
                                                         }
                                                         value={q.validation?.value}
                                                         onChange={(e) => updateValidation(qIdx, 'value', e.target.value)}
-                                                        disabled={hasResponses}
+                                                        disabled={hasResponses && q.id}
                                                     />
                                                     {['BETWEEN', 'NOT_BETWEEN'].includes(q.validation?.operator) && (
                                                         <Input
@@ -669,7 +677,7 @@ export default function EditSurveyPage() {
                                                             placeholder="Max"
                                                             value={q.validation?.value2}
                                                             onChange={(e) => updateValidation(qIdx, 'value2', e.target.value)}
-                                                            disabled={hasResponses}
+                                                            disabled={hasResponses && q.id}
                                                         />
                                                     )}
                                                 </div>
@@ -683,7 +691,7 @@ export default function EditSurveyPage() {
                                                 placeholder="Custom error text"
                                                 value={q.validation?.errorMessage}
                                                 onChange={(e) => updateValidation(qIdx, 'errorMessage', e.target.value)}
-                                                disabled={hasResponses}
+                                                disabled={hasResponses && q.id}
                                             />
                                         </div>
                                     </div>
@@ -696,7 +704,7 @@ export default function EditSurveyPage() {
                                                 type="checkbox"
                                                 checked={q.required}
                                                 onChange={(e) => updateQuestion(qIdx, 'required', e.target.checked)}
-                                                disabled={hasResponses}
+                                                disabled={hasResponses && q.id}
                                                 className="h-4 w-4 bg-background border-input rounded ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                                             />
                                             Required
@@ -704,7 +712,7 @@ export default function EditSurveyPage() {
                                     </div>
 
                                     {/* Simple Validation Toggle Button */}
-                                    {['text', 'number', 'checkbox', 'long_text'].includes(q.type) && !hasResponses && (
+                                    {['text', 'number', 'checkbox', 'long_text'].includes(q.type) && (!hasResponses || !q.id) && (
                                         <Button
                                             variant="ghost"
                                             size="sm"

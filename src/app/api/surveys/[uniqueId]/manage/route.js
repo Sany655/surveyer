@@ -82,10 +82,22 @@ export async function PUT(request, { params }) {
 
         if (questions && questions.length > 0) {
             if (hasResponses) {
-                // Cannot update questions if responses exist
-                // We will silently ignore question updates or could warn user.
-                // For now, logging it.
-                console.log(`Survey ${uniqueId} has responses. Skipping question updates.`);
+                // Cannot update existing questions if responses exist, but can add new ones
+                const newQuestions = questions.filter(q => !q.id);
+
+                if (newQuestions.length > 0) {
+                    const questionData = newQuestions.map(q => ({
+                        survey_id: survey.id,
+                        question: q.text || q.question,
+                        type: q.type || 'text',
+                        options: q.options,
+                        required: q.required || false,
+                        validation: q.validation ? (typeof q.validation === 'object' ? JSON.stringify(q.validation) : q.validation) : null
+                    }));
+                    await SurveyQuestion.bulkCreate(questionData, { transaction });
+                }
+
+                console.log(`Survey ${uniqueId} has responses. Added ${newQuestions.length} new questions.`);
             } else {
                 // DELETE old questions
                 await SurveyQuestion.destroy({ where: { survey_id: survey.id }, transaction });
