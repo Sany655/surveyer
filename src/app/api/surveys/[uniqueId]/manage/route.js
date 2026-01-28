@@ -81,45 +81,46 @@ export async function PUT(request, { params }) {
         }, { transaction });
 
         if (questions && questions.length > 0) {
-            if (hasResponses) {
-                // Cannot update existing questions if responses exist, but can add new ones
-                const newQuestions = questions.filter(q => !q.id);
+            // if (hasResponses) {
+            //     // Cannot update existing questions if responses exist, but can add new ones
+            //     const newQuestions = questions.filter(q => !q.id);
 
-                if (newQuestions.length > 0) {
-                    const questionData = newQuestions.map(q => ({
-                        survey_id: survey.id,
-                        question: q.text || q.question,
-                        type: q.type || 'text',
-                        options: q.options,
-                        required: q.required || false,
-                        validation: q.validation ? (typeof q.validation === 'object' ? JSON.stringify(q.validation) : q.validation) : null
-                    }));
-                    await SurveyQuestion.bulkCreate(questionData, { transaction });
-                }
+            //     if (newQuestions.length > 0) {
+            //         const questionData = newQuestions.map(q => ({
+            //             survey_id: survey.id,
+            //             question: q.text || q.question,
+            //             type: q.type || 'text',
+            //             options: q.options,
+            //             required: q.required || false,
+            //             validation: q.validation ? (typeof q.validation === 'object' ? JSON.stringify(q.validation) : q.validation) : null
+            //         }));
+            //         await SurveyQuestion.bulkCreate(questionData, { transaction });
+            //     }
 
-                console.log(`Survey ${uniqueId} has responses. Added ${newQuestions.length} new questions.`);
-            } else {
-                // DELETE old questions
-                await SurveyQuestion.destroy({ where: { survey_id: survey.id }, transaction });
+            //     console.log(`Survey ${uniqueId} has responses. Added ${newQuestions.length} new questions.`);
+            // } else {
+            // DELETE old questions
+            await SurveyQuestion.destroy({ where: { survey_id: survey.id }, transaction });
 
-                // CREATE new questions
-                const questionData = questions.map(q => ({
-                    survey_id: survey.id,
-                    question: q.text || q.question, // Support both keys
-                    type: q.type || 'text',
-                    options: q.options, // Pass options directly as received
-                    required: q.required || false,
-                    validation: q.validation ? (typeof q.validation === 'object' ? JSON.stringify(q.validation) : q.validation) : null
-                }));
+            // CREATE new questions
+            const questionData = questions.map(q => ({
+                survey_id: survey.id,
+                question: q.text || q.question, // Support both keys
+                type: q.type || 'text',
+                options: q.options, // Pass options directly as received
+                required: q.required || false,
+                validation: q.validation ? (typeof q.validation === 'object' ? JSON.stringify(q.validation) : q.validation) : null
+            }));
 
-                await SurveyQuestion.bulkCreate(questionData, { transaction });
-            }
+            await SurveyQuestion.bulkCreate(questionData, { transaction });
+            // }
         }
 
         await transaction.commit();
         return NextResponse.json({
             message: "Survey updated successfully",
-            warning: hasResponses ? "Questions were not updated because survey has responses." : null
+            // warning: hasResponses ? "Questions were not updated because survey has responses." : null
+            warning: null
         }, { status: 200 });
 
     } catch (error) {

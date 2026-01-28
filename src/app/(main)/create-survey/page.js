@@ -108,6 +108,7 @@ function QuestionaireContent() {
 
     const handleAddQuestion = () => {
         setQuestions([
+            ...questions,
             {
                 text: '',
                 type: 'text',
@@ -115,9 +116,14 @@ function QuestionaireContent() {
                 options: [],
                 hasValidation: false,
                 validation: { type: '', operator: '', value: '', value2: '', errorMessage: '' }
-            },
-            ...questions
+            }
         ])
+        if (window) {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            })
+        }
     }
 
     const handleRemoveQuestion = (index) => {
@@ -539,7 +545,7 @@ function QuestionaireContent() {
                                     ) : (
                                         questions.map((q, qIndex) => (
                                             <Card key={qIndex} className="relative group border-muted">
-                                            <div className="absolute right-2 top-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center bg-white/80 rounded-md shadow-sm">
+                                                <div className="absolute right-2 top-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center bg-white/80 rounded-md shadow-sm">
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
