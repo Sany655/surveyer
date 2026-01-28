@@ -480,7 +480,6 @@ export default function EditSurveyPage() {
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8 text-muted-foreground hover:text-primary"
-                                    disabled={qIdx === 0 || hasResponses}
                                     onClick={() => moveQuestionUp(qIdx)}
                                     title="Move Up"
                                 >
@@ -490,7 +489,6 @@ export default function EditSurveyPage() {
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8 text-muted-foreground hover:text-primary"
-                                    disabled={qIdx === questions.length - 1 || hasResponses}
                                     onClick={() => moveQuestionDown(qIdx)}
                                     title="Move Down"
                                 >
